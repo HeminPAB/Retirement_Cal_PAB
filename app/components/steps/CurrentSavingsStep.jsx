@@ -16,7 +16,7 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
   useEffect(() => {
     // Check if we should auto-save
     const hasAccountType = selectedAccountType && (selectedAccountType !== 'Other' || newAccountName.trim());
-    const hasFinancialData = (parseFloat(newCurrentBalance) > 0) || (parseFloat(newAnnualContribution) > 0);
+    const hasFinancialData = (parseCurrency(newCurrentBalance || '') > 0) || (parseCurrency(newAnnualContribution || '') > 0);
     
     if (hasAccountType && hasFinancialData && showAddAccount) {
       // Auto-save after a brief delay to avoid saving on every keystroke
@@ -43,6 +43,36 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
     }).format(value);
   };
 
+  // Format currency for input display (shows value while typing)
+  const formatInputCurrency = (value) => {
+    if (!value || value === 0) return '';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  // Real-time currency formatting as user types
+  const formatCurrencyRealTime = (value) => {
+    if (!value) return '';
+    
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    
+    if (!numericValue) return '';
+    
+    // Convert to number and format with $ and commas
+    const numberValue = parseInt(numericValue);
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(numberValue);
+  };
+
   // Parse currency string back to number
   const parseCurrency = (value) => {
     if (!value) return 0;
@@ -61,11 +91,11 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
   const addCustomAccount = () => {
     const accountName = selectedAccountType === 'Other' ? newAccountName.trim() : selectedAccountType;
     if (accountName) {
-      const annualContribution = parseFloat(newAnnualContribution) || 0;
+      const annualContribution = parseCurrency(newAnnualContribution) || 0;
       const newAccount = {
         id: Date.now(),
         name: accountName,
-        currentBalance: parseFloat(newCurrentBalance) || 0,
+        currentBalance: parseCurrency(newCurrentBalance) || 0,
         annualContribution: annualContribution,
         monthlyContribution: annualContribution / 12
       };
@@ -121,12 +151,14 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
 
   // Include values being typed in the add form
   const totalCurrentSavings = customAccounts.reduce((total, account) => {
-    return total + (parseFloat(account.currentBalance) || 0);
-  }, 0) + (parseFloat(newCurrentBalance) || 0);
+    const value = typeof account.currentBalance === 'string' ? parseCurrency(account.currentBalance) : (parseFloat(account.currentBalance) || 0);
+    return total + value;
+  }, 0) + (parseCurrency(newCurrentBalance) || 0);
 
   const totalAnnualContributions = customAccounts.reduce((total, account) => {
-    return total + (parseFloat(account.annualContribution) || 0);
-  }, 0) + (parseFloat(newAnnualContribution) || 0);
+    const value = typeof account.annualContribution === 'string' ? parseCurrency(account.annualContribution) : (parseFloat(account.annualContribution) || 0);
+    return total + value;
+  }, 0) + (parseCurrency(newAnnualContribution) || 0);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -166,8 +198,11 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   type="text"
                   className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                   placeholder="e.g. $10,000"
-                  value={formatCurrency(account.currentBalance)}
-                  onChange={(e) => handleCustomAccountChange(index, 'currentBalance', parseCurrency(e.target.value))}
+                  value={typeof account.currentBalance === 'string' ? account.currentBalance : formatInputCurrency(account.currentBalance)}
+                  onChange={(e) => {
+                    const formattedValue = formatCurrencyRealTime(e.target.value);
+                    handleCustomAccountChange(index, 'currentBalance', formattedValue);
+                  }}
                   onBlur={(e) => {
                     const numericValue = parseCurrency(e.target.value);
                     handleCustomAccountChange(index, 'currentBalance', numericValue);
@@ -183,11 +218,10 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   type="text"
                   className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                   placeholder="e.g. $7,200"
-                  value={formatCurrency(account.annualContribution)}
+                  value={typeof account.annualContribution === 'string' ? account.annualContribution : formatInputCurrency(account.annualContribution)}
                   onChange={(e) => {
-                    const annualValue = parseCurrency(e.target.value);
-                    handleCustomAccountChange(index, 'annualContribution', annualValue);
-                    handleCustomAccountChange(index, 'monthlyContribution', annualValue / 12);
+                    const formattedValue = formatCurrencyRealTime(e.target.value);
+                    handleCustomAccountChange(index, 'annualContribution', formattedValue);
                   }}
                   onBlur={(e) => {
                     const annualValue = parseCurrency(e.target.value);
@@ -247,11 +281,18 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
                     type="text"
                     className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                     placeholder="e.g. $10,000"
-                    value={formatCurrency(parseFloat(newCurrentBalance) || 0)}
-                    onChange={(e) => setNewCurrentBalance(parseCurrency(e.target.value).toString())}
+                    value={newCurrentBalance || ''}
+                    onChange={(e) => {
+                      const formattedValue = formatCurrencyRealTime(e.target.value);
+                      setNewCurrentBalance(formattedValue);
+                    }}
                     onBlur={(e) => {
                       const numericValue = parseCurrency(e.target.value);
-                      setNewCurrentBalance(numericValue.toString());
+                      if (numericValue > 0) {
+                        setNewCurrentBalance(formatInputCurrency(numericValue));
+                      } else {
+                        setNewCurrentBalance('');
+                      }
                     }}
                   />
                 </div>
@@ -264,11 +305,18 @@ const CurrentSavingsStep = ({ formData, updateFormData, onNext, onPrev }) => {
                     type="text"
                     className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                     placeholder="e.g. $7,200"
-                    value={formatCurrency(parseFloat(newAnnualContribution) || 0)}
-                    onChange={(e) => setNewAnnualContribution(parseCurrency(e.target.value).toString())}
+                    value={newAnnualContribution || ''}
+                    onChange={(e) => {
+                      const formattedValue = formatCurrencyRealTime(e.target.value);
+                      setNewAnnualContribution(formattedValue);
+                    }}
                     onBlur={(e) => {
                       const numericValue = parseCurrency(e.target.value);
-                      setNewAnnualContribution(numericValue.toString());
+                      if (numericValue > 0) {
+                        setNewAnnualContribution(formatInputCurrency(numericValue));
+                      } else {
+                        setNewAnnualContribution('');
+                      }
                     }}
                   />
                 </div>

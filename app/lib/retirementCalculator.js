@@ -14,6 +14,15 @@ export function formatCurrency(value) {
   }
 }
 
+// Helper function to parse currency strings back to numbers
+function parseCurrency(value) {
+  if (!value) return 0;
+  if (typeof value === 'number') return value;
+  // Remove all non-numeric characters except decimal point
+  const numericValue = value.toString().replace(/[^0-9.]/g, '');
+  return parseFloat(numericValue) || 0;
+}
+
 export function calculateRetirement(inputs) {
   // Extract inputs with clear variable names
   const {
@@ -51,11 +60,11 @@ export function calculateRetirement(inputs) {
 
   // Calculate current total savings and annual contributions
   const currentSavings = customAccounts.reduce((total, account) => {
-    return total + (parseFloat(account.currentBalance) || 0);
+    return total + parseCurrency(account.currentBalance);
   }, 0);
 
   const annualContributions = customAccounts.reduce((total, account) => {
-    return total + (parseFloat(account.annualContribution) || 0);
+    return total + parseCurrency(account.annualContribution);
   }, 0);
 
   // Calculate income at retirement (with growth)

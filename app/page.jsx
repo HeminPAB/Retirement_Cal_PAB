@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Layout from './components/Layout';
 import PersonalInfoStep from './components/steps/PersonalInfoStep';
 import CurrentSavingsStep from './components/steps/CurrentSavingsStep';
@@ -60,6 +60,27 @@ export default function HomePage() {
     setFormData(prev => ({ ...prev, ...newData }));
   };
 
+  // Debounced calculation function
+  const debouncedCalculate = useCallback(
+    debounce((data) => {
+      calculateResultsFromData(data);
+    }, 500), // 500ms delay
+    []
+  );
+
+  // Helper function to create debounce
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
   // Progressive reveal logic for sections
   const showCurrentSavings = formData.currentAge > 0 && 
                               formData.retirementAge > formData.currentAge && 
@@ -78,43 +99,70 @@ export default function HomePage() {
   
 
 
-  const calculateResults = async () => {
-    if (!showResults) return;
+  // Check if we have minimum required data for calculation
+  const hasMinimumData = (data) => {
+    return data.currentAge > 0 && 
+           data.retirementAge > data.currentAge && 
+           data.annualIncome > 0 &&
+           data.incomeGrowthRate > 0 &&
+           data.incomeReplacementRatio > 0 &&
+           data.expectedReturnType;
+  };
+
+  // Calculate results from form data (can handle partial data)
+  const calculateResultsFromData = async (data) => {
+    if (!hasMinimumData(data)) {
+      setResults(null);
+      return;
+    }
     
     setIsCalculating(true);
     
     try {
-      // Debug logging
-      console.log('Form Data:', formData);
-      console.log('Custom Accounts:', formData.customAccounts);
-      
       // Use the simple calculation function
       const results = calculateRetirement({
-        currentAge: formData.currentAge,
-        retirementAge: formData.retirementAge,
-        annualIncome: formData.annualIncome,
-        incomeGrowthRate: formData.incomeGrowthRate || 0.02,
-        incomeReplacementRatio: formData.incomeReplacementRatio || 0.8,
-        customAccounts: formData.customAccounts || [],
-        expectedReturnType: formData.expectedReturnType,
-        otherIncome: formData.otherIncome || 0
+        currentAge: data.currentAge,
+        retirementAge: data.retirementAge,
+        annualIncome: data.annualIncome,
+        incomeGrowthRate: data.incomeGrowthRate || 0.02,
+        incomeReplacementRatio: data.incomeReplacementRatio || 0.8,
+        customAccounts: data.customAccounts || [],
+        expectedReturnType: data.expectedReturnType,
+        otherIncome: data.otherIncome || 0
       });
-
-      // Debug log to check the results
-      console.log('Calculation Results:', results);
 
       setResults(results);
     } catch (error) {
       console.error('Error calculating results:', error);
+      setResults(null);
     } finally {
       setIsCalculating(false);
     }
   };
 
-  // Auto-calculate when ready
-  if (showResults && !results && !isCalculating) {
-    calculateResults();
-  }
+  // Legacy function for backward compatibility
+  const calculateResults = async () => {
+    await calculateResultsFromData(formData);
+  };
+
+  // Dynamic calculation effect - recalculate when relevant data changes
+  useEffect(() => {
+    if (hasMinimumData(formData)) {
+      debouncedCalculate(formData);
+    } else {
+      setResults(null);
+    }
+  }, [
+    formData.currentAge,
+    formData.retirementAge,
+    formData.annualIncome,
+    formData.incomeGrowthRate,
+    formData.incomeReplacementRatio,
+    formData.expectedReturnType,
+    formData.customAccounts,
+    formData.otherIncome,
+    debouncedCalculate
+  ]);
 
   const handleStartOver = () => {
     setFormData(initialFormData);
@@ -179,29 +227,37 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Results Section - Shows after protection questions */}
-            {showResults && (
+            {/* Results Section - Shows dynamically when we have minimum data */}
+            {hasMinimumData(formData) && (
               <div className="animate-fadeIn">
                 <div className="mb-6 lg:mb-8">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-normal text-gray-600 mb-2">Your retirement plan</h1>
                   <p className="text-sm sm:text-base text-gray-500">Based on your information, here's your personalized retirement projection</p>
+                  {isCalculating && (
+                    <div className="mt-2 flex items-center text-sm text-cyan-600">
+                      <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-500 mr-2"></div>
+                      Updating calculations...
+                    </div>
+                  )}
                 </div>
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
-                  {isCalculating ? (
-                    <div className="text-center py-12">
-                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
-                      <p className="mt-4 text-gray-600">Calculating your retirement projection...</p>
-                    </div>
-                  ) : results ? (
+                  {results ? (
                     <ResultsStep 
                       results={results}
                       formData={formData}
                       onStartOver={handleStartOver}
                     />
-                  ) : null}
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+                      <p className="mt-4 text-gray-600">Calculating your retirement projection...</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
+
+
 
 
 

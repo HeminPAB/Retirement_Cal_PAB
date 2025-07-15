@@ -115,9 +115,9 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
             <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">Do you have anyone depending on your income?</h2>
             <p className="text-gray-500 text-sm">Consider spouse, children, parents, or others who rely on your financial support</p>
           </div>
-          <div className="flex gap-4 justify-start lg:justify-end lg:mr-[15%] w-full">
+          <div className="flex gap-3 justify-center lg:justify-end lg:mr-[15%] w-full">
             <label
-              className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+              className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                 ${formData.hasDependents === true
                   ? 'bg-blue-50 border-blue-200'
                   : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -131,7 +131,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                 onChange={(e) => handleInputChange('hasDependents', e.target.value === 'true')}
                 className="sr-only"
               />
-              <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+              <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                 ${formData.hasDependents === true
                   ? 'bg-blue-50 border-blue-200'
                   : 'border-gray-300 bg-white'}
@@ -144,7 +144,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
             </label>
             
             <label
-              className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+              className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                 ${formData.hasDependents === false
                   ? 'bg-blue-50 border-blue-200'
                   : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -158,7 +158,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                 onChange={(e) => handleInputChange('hasDependents', e.target.value === 'true')}
                 className="sr-only"
               />
-              <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+              <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                 ${formData.hasDependents === false
                   ? 'bg-blue-50 border-blue-200'
                   : 'border-gray-300 bg-white'}
@@ -270,9 +270,9 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
               <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">Do you have debt you'd want paid off?</h2>
               <p className="text-gray-500 text-sm">Consider mortgage, loans, credit cards, or other debts you'd want covered</p>
             </div>
-            <div className="flex gap-4 justify-start lg:justify-end lg:mr-[15%] w-full">
+            <div className="flex gap-3 justify-center lg:justify-end lg:mr-[15%] w-full">
               <label
-                className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+                className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                   ${formData.hasDebt === true
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -286,7 +286,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   onChange={(e) => handleInputChange('hasDebt', true)}
                   className="sr-only"
                 />
-                <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+                <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                   ${formData.hasDebt === true
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white'}
@@ -299,7 +299,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
               </label>
               
               <label
-                className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+                className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                   ${formData.hasDebt === false
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -313,7 +313,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   onChange={(e) => handleInputChange('hasDebt', false)}
                   className="sr-only"
                 />
-                <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+                <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                   ${formData.hasDebt === false
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white'}
@@ -360,9 +360,9 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
               <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">Do you currently have coverage?</h2>
               <p className="text-gray-500 text-sm">Life insurance, disability insurance, or other coverage through work or personal policies</p>
             </div>
-            <div className="flex gap-4 justify-start lg:justify-end lg:mr-[15%] w-full">
+            <div className="flex gap-3 justify-center lg:justify-end lg:mr-[15%] w-full">
               <label
-                className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+                className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                   ${formData.hasCoverage === true
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -376,7 +376,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   onChange={(e) => handleInputChange('hasCoverage', true)}
                   className="sr-only"
                 />
-                <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+                <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                   ${formData.hasCoverage === true
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white'}
@@ -389,7 +389,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
               </label>
               
               <label
-                className={`flex items-center cursor-pointer w-1/2 border-2 rounded-lg px-4 py-3 transition-colors
+                className={`flex items-center cursor-pointer w-[48%] lg:w-1/2 border-2 rounded-lg px-3 py-3 lg:px-4 transition-colors
                   ${formData.hasCoverage === false
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white hover:border-gray-400'}
@@ -403,7 +403,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   onChange={(e) => handleInputChange('hasCoverage', false)}
                   className="sr-only"
                 />
-                <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center
+                <div className={`w-6 h-6 rounded-full border-2 mr-2 lg:mr-3 flex items-center justify-center
                   ${formData.hasCoverage === false
                     ? 'bg-blue-50 border-blue-200'
                     : 'border-gray-300 bg-white'}

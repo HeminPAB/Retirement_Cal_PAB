@@ -346,7 +346,7 @@ const ResultsStep = ({ results, formData, onPrev, onStartOver }) => {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-200">
+        <div className="flex justify-center items-center gap-4 pt-8 border-t border-gray-200">
           {/* <button
             onClick={handleDownloadPDF}
             className="w-full sm:w-auto px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
@@ -355,7 +355,7 @@ const ResultsStep = ({ results, formData, onPrev, onStartOver }) => {
           </button> */}
           <button
             onClick={onStartOver}
-            className="w-full sm:w-auto px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             Start New Calculation
           </button>

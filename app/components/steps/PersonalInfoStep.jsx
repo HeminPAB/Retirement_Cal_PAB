@@ -239,9 +239,9 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
                 onChange={(e) => handleInputChange('incomeGrowthRate', parseFloat(e.target.value))}
               >
                 <option value="">Select income growth</option>
-                <option value={0.02}>2% - Conservative</option>
-                <option value={0.03}>3% - Moderate</option>
-                <option value={0.04}>4% - Optimistic</option>
+                <option value={0.02}>Limited - up to 2%</option>
+                <option value={0.035}>Consistent - 3-4%</option>
+                <option value={0.065}>Accelerated - 5-7%</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
