@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?display=swap&family=Lexend:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900');
+
+@layer base {
+  html {
+    font-family: 'Lexend', 'Noto Sans', sans-serif;
+  }
+}
+
+@layer components {
+  .select-button {
+    background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(151,78,109)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e');
+    background-position: right 15px center;
+    background-repeat: no-repeat;
+    background-size: 24px;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 640px) {
+    input[type="number"], 
+    input[type="text"], 
+    select {
+      font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+    
+    .overflow-x-auto table {
+      min-width: 600px; /* Ensures table is scrollable on mobile */
+    }
+  }
+
+  /* Touch target improvements for mobile */
+  @media (max-width: 768px) {
+    button, 
+    label {
+      min-height: 44px; /* iOS recommended touch target size */
+      min-width: 44px;
+    }
+    
+    input[type="radio"] + div {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+} 
+
+/* Remove spinner arrows from number inputs (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove spinner arrows from number inputs (Firefox) */
+input[type="number"] {
+  -moz-appearance: textfield;
+} 
