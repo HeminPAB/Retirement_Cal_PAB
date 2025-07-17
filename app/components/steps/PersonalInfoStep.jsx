@@ -1,8 +1,19 @@
 import { useState } from 'react';
 
 const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
+  const [ageError, setAgeError] = useState('');
+  const [retirementAgeError, setRetirementAgeError] = useState('');
+
   const handleInputChange = (field, value) => {
     updateFormData({ [field]: value });
+    // Clear age error when user starts typing again
+    if (field === 'currentAge') {
+      setAgeError('');
+    }
+    // Clear retirement age error when user starts typing again
+    if (field === 'retirementAge') {
+      setRetirementAgeError('');
+    }
   };
 
   // Helper to format number as currency
@@ -33,12 +44,9 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
                   formData.incomeGrowthRate > 0 &&
                   formData.incomeReplacementRatio > 0;
 
-  // Error for retirement age
-  const retirementAgeError = formData.currentAge > 0 && formData.retirementAge > 0 && formData.retirementAge <= formData.currentAge;
-
   // Determine which questions should be visible based on completion
-  const showRetirementAge = formData.currentAge > 0;
-  const showAnnualIncome = showRetirementAge && formData.retirementAge > 0;
+  const showRetirementAge = formData.currentAge > 0 && !ageError;
+  const showAnnualIncome = showRetirementAge && formData.retirementAge > 0 && !retirementAgeError;
   const showProvince = showAnnualIncome && formData.annualIncome > 0;
   const showMaritalStatus = showProvince && formData.province;
   const showIncomeGrowth = showMaritalStatus && formData.maritalStatus;
@@ -66,9 +74,20 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
               placeholder="35"
               value={formData.currentAge || ''}
               onChange={(e) => handleInputChange('currentAge', parseInt(e.target.value) || 0)}
+              onBlur={(e) => {
+                const age = parseInt(e.target.value) || 0;
+                if (age < 18 || age > 70) {
+                  setAgeError('Age must be between 18 to 70 years');
+                  // Clear the input field
+                  e.target.value = '';
+                } else {
+                  setAgeError('');
+                }
+              }}
               min="18"
-              max="75"
+              max="70"
             />
+            {ageError && <p className="text-red-500 text-sm mt-2">{ageError}</p>}
           </div>
         </div>
 
@@ -86,12 +105,20 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
                 placeholder="65"
                 value={formData.retirementAge || ''}
                 onChange={(e) => handleInputChange('retirementAge', parseInt(e.target.value) || 0)}
+                onBlur={(e) => {
+                  const age = parseInt(e.target.value) || 0;
+                  if (age < formData.currentAge + 1 || age > 90) {
+                    setRetirementAgeError('Retirement age should be more than current age and less than 90 years of age');
+                    // Clear the input field
+                    e.target.value = '';
+                  } else {
+                    setRetirementAgeError('');
+                  }
+                }}
                 min={formData.currentAge + 1}
-                max="75"
+                max="90"
               />
-              {retirementAgeError && (
-                <p className="text-red-500 text-sm mt-2">Retirement age should be greater than current age.</p>
-              )}
+              {retirementAgeError && <p className="text-red-500 text-sm mt-2">{retirementAgeError}</p>}
             </div>
           </div>
         )}
@@ -320,7 +347,7 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
               ) && (
                 <div className="mt-2 relative">
                   <input
-                    type="number"
+                    type="text"
                     className="w-full px-4 py-3 border border-gray-300 rounded-md text-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter percentage"
                     value={
@@ -329,15 +356,19 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
                         : ''
                     }
                     onChange={(e) => {
-                      const value = parseFloat(e.target.value);
-                      if (isNaN(value) || value === '') {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      if (value === '') {
                         handleInputChange('incomeReplacementRatio', 'custom');
-                      } else if (value >= 1) {
-                        handleInputChange('incomeReplacementRatio', value / 100);
+                      } else {
+                        const numericValue = parseInt(value);
+                        if (numericValue >= 1 && numericValue <= 150) {
+                          handleInputChange('incomeReplacementRatio', numericValue / 100);
+                        }
                       }
                     }}
-                    min="1"
-                    max="150"
+                    onWheel={(e) => e.target.blur()}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
                 </div>
