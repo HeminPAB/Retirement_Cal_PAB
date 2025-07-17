@@ -357,7 +357,7 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
         {showCoverage && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center animate-fadeIn">
             <div>
-              <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">Do you currently have coverage?</h2>
+              <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">Do you currently have any insurance coverage?</h2>
               <p className="text-gray-500 text-sm">Life insurance, disability insurance, or other coverage through work or personal policies</p>
             </div>
             <div className="flex gap-3 justify-center lg:justify-end lg:mr-[15%] w-full">
@@ -423,65 +423,114 @@ const ProtectionStep = ({ formData, updateFormData, onNext, onPrev }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center animate-fadeIn">
             <div>
               <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">What type of coverage do you have?</h2>
-              <p className="text-gray-500 text-sm">Select the type that best describes your current coverage</p>
+              <p className="text-gray-500 text-sm">Select all that apply to your current coverage</p>
             </div>
             <div>
-              {/* Mobile Dropdown */}
-              <select
-                className="block md:hidden w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                value={formData.currentCoverageType || ''}
-                onChange={(e) => handleInputChange('currentCoverageType', e.target.value)}
-              >
-                <option value="">Select coverage type</option>
-                <option value="term">Term Life Insurance</option>
-                <option value="whole">Whole Life Insurance</option>
-                <option value="universal">Universal Life Insurance</option>
-                <option value="other">Other</option>
-              </select>
+              {/* Mobile Multi-Select */}
+              <div className="block md:hidden">
+                <div className="space-y-2">
+                  {['term', 'whole', 'universal', 'other'].map(type => (
+                    <label key={type} className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={(formData.currentCoverageTypes || []).includes(type)}
+                        onChange={() => {
+                          const currentTypes = formData.currentCoverageTypes || [];
+                          const newTypes = currentTypes.includes(type)
+                            ? currentTypes.filter(t => t !== type)
+                            : [...currentTypes, type];
+                          handleInputChange('currentCoverageTypes', newTypes);
+                        }}
+                      />
+                      <div className={`w-6 h-6 rounded border-2 mr-3 flex items-center justify-center ${
+                        (formData.currentCoverageTypes || []).includes(type)
+                          ? 'border-blue-500 bg-blue-500'
+                          : 'border-gray-300 bg-white'
+                      }`}>
+                        {(formData.currentCoverageTypes || []).includes(type) && (
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-gray-700 text-base lg:text-lg">
+                        {type === 'term' ? 'Term Life Insurance' :
+                         type === 'whole' ? 'Whole Life Insurance' :
+                         type === 'universal' ? 'Universal Life Insurance' : 'Other'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
               {/* Desktop Buttons */}
               <div className="hidden md:grid grid-cols-2 gap-4">
                 <button
                   type="button"
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
-                    formData.currentCoverageType === 'term'
+                    (formData.currentCoverageTypes || []).includes('term')
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
-                  onClick={() => handleInputChange('currentCoverageType', 'term')}
+                  onClick={() => {
+                    const currentTypes = formData.currentCoverageTypes || [];
+                    const newTypes = currentTypes.includes('term')
+                      ? currentTypes.filter(t => t !== 'term')
+                      : [...currentTypes, 'term'];
+                    handleInputChange('currentCoverageTypes', newTypes);
+                  }}
                 >
                   <div className="font-semibold text-md">Term Life Insurance</div>
                 </button>
                 <button
                   type="button"
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
-                    formData.currentCoverageType === 'whole'
+                    (formData.currentCoverageTypes || []).includes('whole')
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
-                  onClick={() => handleInputChange('currentCoverageType', 'whole')}
+                  onClick={() => {
+                    const currentTypes = formData.currentCoverageTypes || [];
+                    const newTypes = currentTypes.includes('whole')
+                      ? currentTypes.filter(t => t !== 'whole')
+                      : [...currentTypes, 'whole'];
+                    handleInputChange('currentCoverageTypes', newTypes);
+                  }}
                 >
                   <div className="font-semibold text-md">Whole Life Insurance</div>
                 </button>
                 <button
                   type="button"
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
-                    formData.currentCoverageType === 'universal'
+                    (formData.currentCoverageTypes || []).includes('universal')
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
-                  onClick={() => handleInputChange('currentCoverageType', 'universal')}
+                  onClick={() => {
+                    const currentTypes = formData.currentCoverageTypes || [];
+                    const newTypes = currentTypes.includes('universal')
+                      ? currentTypes.filter(t => t !== 'universal')
+                      : [...currentTypes, 'universal'];
+                    handleInputChange('currentCoverageTypes', newTypes);
+                  }}
                 >
                   <div className="font-semibold text-md">Universal Life Insurance</div>
                 </button>
                 <button
                   type="button"
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
-                    formData.currentCoverageType === 'other'
+                    (formData.currentCoverageTypes || []).includes('other')
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
-                  onClick={() => handleInputChange('currentCoverageType', 'other')}
+                  onClick={() => {
+                    const currentTypes = formData.currentCoverageTypes || [];
+                    const newTypes = currentTypes.includes('other')
+                      ? currentTypes.filter(t => t !== 'other')
+                      : [...currentTypes, 'other'];
+                    handleInputChange('currentCoverageTypes', newTypes);
+                  }}
                 >
                   <div className="font-semibold text-md">Other</div>
                 </button>

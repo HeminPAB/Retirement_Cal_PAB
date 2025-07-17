@@ -269,7 +269,7 @@ const RetirementChart = ({
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-semibold text-red-800">
-                      ⚠️ Funds may be depleted around age {actualDepletionAge}
+                      Funds may be depleted around age {actualDepletionAge}
                     </p>
                   </div>
                 </div>

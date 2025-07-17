@@ -138,7 +138,7 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
                 type="text"
                 className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-md text-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="e.g. $1,000"
-                value={formData.otherIncome && formData.otherIncome > 0 ? formatCurrency(formData.otherIncome) : ''}
+                value={formData.otherIncome !== undefined ? formatCurrency(formData.otherIncome) : ''}
                 onChange={(e) => {
                   const numericValue = parseCurrency(e.target.value);
                   handleInputChange('otherIncome', numericValue);
@@ -229,8 +229,7 @@ const PersonalInfoStep = ({ formData, updateFormData, onNext, onPrev }) => {
         {showIncomeGrowth && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center animate-fadeIn">
             <div>
-              <h2 className="text-lg lg:text-xl font-normal text-gray-700 mb-2">How fast will your income grow?</h2>
-              <p className="text-gray-500 text-sm">Expected annual salary increases</p>
+              <h2 className="text-lg lg:text-xl font-normal text-gray-700">What is your projected income growth?</h2>
             </div>
             <div className="relative">
               <select
